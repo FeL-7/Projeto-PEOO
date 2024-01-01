@@ -15,9 +15,11 @@ class App:
         self.janela.geometry("1200x670")
         self.janela.configure(bg=dict_cores["corPadrao"])
         self.janela.resizable(width=False, height=False)
-
+        
         self.icone = PhotoImage(file="PEOO\Projeto-PEOO\imagens\icone.png")
         self.janela.iconphoto(False, self.icone)
+
+        self.saldo = 0.00
 
         self.conexao = sqlite3.connect("estoqueDeTintas.db")
         self.sql = self.conexao.cursor()
@@ -98,203 +100,220 @@ class App:
 
 
     def ativarModoTintas(self):
-        self.background.destroy()
 
-        self.statusTelaModoTintas = "Criada"
+        self.containerTintas = Frame(self.mainContainer,
+                                   width=940,
+                                   height=670,
+                                   bg=dict_cores["corPadrao"]
+                                   )
+        self.containerTintas.place(x=0, y=0)
+
+        self.tituloTintas = Label(self.containerTintas,
+                                  bg=dict_cores["corPadrao"],
+                                  fg=dict_cores["roxo"],
+                                  text="ESTOQUE DE TINTAS")
+        self.tituloTintas.place(x=50, y=30)
 
 
         # PARA ADICIONAR UMA COR
 
-        self.labelModoCor1 = Label(self.mainContainer,
+        self.labelModoCor1 = Label(self.containerTintas,
                                     bg=dict_cores["corPadrao"],
                                     fg=dict_cores["verde"],
                                     text="ADICIONAR NOVA COR")
-        self.labelModoCor1.place(x=100, y=30)
+        self.labelModoCor1.place(x=100, y=110)
 
-        self.labelAdicionarCor1 = Label(self.mainContainer,
+        self.labelAdicionarCor1 = Label(self.containerTintas,
                                     bg=dict_cores["corPadrao"],
                                     fg=dict_cores["verde"],
                                     text="NOME DA NOVA COR:")
-        self.labelAdicionarCor1.place(x=100, y=60)
+        self.labelAdicionarCor1.place(x=100, y=140)
 
-        self.labelAdicionarCor2 = Label(self.mainContainer,
-                                    bg=dict_cores["corPadrao"],
-                                    fg=dict_cores["verde"],
-                                    text="CÓDIGO (HEXADECIMAL) DA NOVA COR:")
-        self.labelAdicionarCor2.place(x=100, y=90)
-
-        self.entryAdicionarCor1 = Entry(self.mainContainer,
+        self.entryAdicionarCor1 = Entry(self.containerTintas,
                                     bg=dict_cores["corPadrao"],
                                     fg="black",
                                     width=60)
-        self.entryAdicionarCor1.place(x=240, y=60)
+        self.entryAdicionarCor1.place(x=240, y=140)
 
-        self.entryAdicionarCor2 = Entry(self.mainContainer,
-                                    bg=dict_cores["corPadrao"],
-                                    fg="black",
-                                    width=60)
-        self.entryAdicionarCor2.place(x=330, y=90)
-
-        self.btnAdicionarCor = Button(self.mainContainer,
+        self.btnAdicionarCor = Button(self.containerTintas,
                                       bg=dict_cores["verde"],
                                       fg="white",
                                       borderwidth=0,
-                                      text="Adicionar cor")
-        self.btnAdicionarCor.place(x=490, y=120)
+                                      text="Escolher tom da cor")
+        self.btnAdicionarCor.place(x=490, y=200)
 
         # PARA EXCLUIR UMA COR
 
-        self.labelModoCor2 = Label(self.mainContainer,
+        self.labelModoCor2 = Label(self.containerTintas,
                                     bg=dict_cores["corPadrao"],
                                     fg=dict_cores["verde"],
                                     text="EXCLUIR COR JÁ EXISTENTE")
-        self.labelModoCor2.place(x=100, y=170)
+        self.labelModoCor2.place(x=100, y=250)
 
-        self.labelExcluirCor1 = Label(self.mainContainer,
+        self.labelExcluirCor1 = Label(self.containerTintas,
                                     bg=dict_cores["corPadrao"],
                                     fg=dict_cores["verde"],
                                     text="NOME DA COR:")
-        self.labelExcluirCor1.place(x=100, y=200)
+        self.labelExcluirCor1.place(x=100, y=280)
 
-        self.entryExcluirCor = Entry(self.mainContainer,
+        self.entryExcluirCor = Entry(self.containerTintas,
                                     bg=dict_cores["corPadrao"],
                                     fg="black",
                                     width=60)
-        self.entryExcluirCor.place(x=240, y=200)
+        self.entryExcluirCor.place(x=240, y=280)
 
-        self.btnExcluirCor = Button(self.mainContainer,
+        self.btnExcluirCor = Button(self.containerTintas,
                                       bg=dict_cores["verde"],
                                       fg="white",
                                       borderwidth=0,
                                       text="Excluir cor")
-        self.btnExcluirCor.place(x=500, y=230)
+        self.btnExcluirCor.place(x=500, y=310)
 
         # PARA LISTAR COR
 
-        self.labelModoCor3 = Label(self.mainContainer,
+        self.labelModoCor3 = Label(self.containerTintas,
                                     bg=dict_cores["corPadrao"],
                                     fg=dict_cores["verde"],
                                     text="LISTAR CORES")
-        self.labelModoCor3.place(x=100, y=270)
+        self.labelModoCor3.place(x=100, y=350)
 
-        self.labelListarCor1 = Label(self.mainContainer,
+        self.labelListarCor1 = Label(self.containerTintas,
                                     bg=dict_cores["corPadrao"],
                                     fg=dict_cores["verde"],
                                     text="NOME DA COR:")
-        self.labelListarCor1.place(x=100, y=300)
+        self.labelListarCor1.place(x=100, y=380)
 
-        self.entryListarCor1 = Entry(self.mainContainer,
+        self.entryListarCor1 = Entry(self.containerTintas,
                                     bg=dict_cores["corPadrao"],
                                     fg="black",
                                     width=60)
-        self.entryListarCor1.place(x=240, y=330)
+        self.entryListarCor1.place(x=240, y=410)
 
-        self.btnListarCor = Button(self.mainContainer,
+        self.btnListarCor = Button(self.containerTintas,
                                       bg=dict_cores["verde"],
                                       fg="white",
                                       borderwidth=0,
                                       text="Listar cor")
-        self.btnListarCor.place(x=500, y=360)
-
-        self.elementosModoTintas = [self.labelModoCor1, self.labelModoCor2, self.labelModoCor3, 
-                                    self.labelAdicionarCor1, self.entryAdicionarCor2, self.labelAdicionarCor2, 
-                                    self.entryAdicionarCor1, self.entryAdicionarCor2, self.btnAdicionarCor, 
-                                    self.labelExcluirCor1, self.entryExcluirCor, self.btnExcluirCor, self.labelModoCor3, 
-                                    self.labelListarCor1, self.entryListarCor1, self.btnListarCor]
-
-
-        if self.statusTelaModoFinanceiro == "Criada":
-            for i in self.elementosModoFinanceiro:
-                i.destroy()
-
-            self.statusTelaModoFinanceiro = "Destruída"
+        self.btnListarCor.place(x=500, y=440)
+        
+        self.mostradorTintas = Label(self.containerTintas,
+                               bg=dict_cores["corPadrao"],
+                               fg=dict_cores["roxo"],
+                               width=100,
+                               height=5,
+                               anchor="w",
+                               text="Cor inserida com sucesso")
+        self.mostradorTintas.place(x=100, y=520)
         
 
 
     def ativarModoFinanceiro(self):
-        self.background.destroy()
 
-        self.statusTelaModoFinanceiro = "Criada"
+        self.containerFinanceiro = Frame(self.mainContainer,
+                                   width=940,
+                                   height=670,
+                                   bg=dict_cores["corPadrao"]
+                                   )
+        self.containerFinanceiro.place(x=0, y=0)
 
-        if self.statusTelaModoTintas == "Criada":
-            for i in self.elementosModoTintas:
-                i.destroy()
-
-            self.statusTelaModoTintas = "Destruída"
-
+        self.tituloFinanceiro = Label(self.containerFinanceiro,
+                                      bg=dict_cores["corPadrao"],
+                                      fg=dict_cores["roxo"],
+                                      text="CONTROLE FINANCEIRO")
+        self.tituloFinanceiro.place(x=50, y=30)
 
         # ADICIONANDO AO SALDO
 
-        self.labelModoFinanceiro1 = Label(self.mainContainer,
+        self.labelModoFinanceiro1 = Label(self.containerFinanceiro,
                                     bg=dict_cores["corPadrao"],
                                     fg=dict_cores["verde"],
                                     text="ACRESCENTAR NOVO VALOR AO SALDO")
-        self.labelModoFinanceiro1.place(x=100, y=30)
+        self.labelModoFinanceiro1.place(x=100, y=130)
 
-        self.labelAdicionarValor = Label(self.mainContainer,
+        self.labelAdicionarValor = Label(self.containerFinanceiro,
                                     bg=dict_cores["corPadrao"],
                                     fg=dict_cores["verde"],
                                     text="VALOR A ACRESCENTAR:")
-        self.labelAdicionarValor.place(x=100, y=60)
+        self.labelAdicionarValor.place(x=100, y=160)
 
-        self.entryAdicionarValor = Entry(self.mainContainer,
+        self.entryAdicionarValor = Entry(self.containerFinanceiro,
                                     bg=dict_cores["corPadrao"],
                                     fg="black",
                                     width=60)
-        self.entryAdicionarValor.place(x=240, y=60)
+        self.entryAdicionarValor.place(x=240, y=160)
 
-        self.btnAdicionarValor = Button(self.mainContainer,
+        self.btnAdicionarValor = Button(self.containerFinanceiro,
                                       bg=dict_cores["verde"],
                                       fg="white",
                                       borderwidth=0,
-                                      text="Adicionar valor")
-        self.btnAdicionarValor.place(x=490, y=120)
+                                      text="Adicionar valor",
+                                      command=self.adicionarValor)
+        self.btnAdicionarValor.place(x=490, y=220)
 
         # RETIRANDO DO SALDO
 
-        self.labelModoFinanceiro2 = Label(self.mainContainer,
+        self.labelModoFinanceiro2 = Label(self.containerFinanceiro,
                                     bg=dict_cores["corPadrao"],
                                     fg=dict_cores["verde"],
                                     text="RETIRAR VALOR DO SALDO")
-        self.labelModoFinanceiro2.place(x=100, y=170)
+        self.labelModoFinanceiro2.place(x=100, y=270)
 
-        self.labelRetirarValor = Label(self.mainContainer,
+        self.labelRetirarValor = Label(self.containerFinanceiro,
                                     bg=dict_cores["corPadrao"],
                                     fg=dict_cores["verde"],
                                     text="VALOR A RETIRAR:")
-        self.labelRetirarValor.place(x=100, y=200)
+        self.labelRetirarValor.place(x=100, y=300)
 
-        self.entryRetirarValor = Entry(self.mainContainer,
+        self.entryRetirarValor = Entry(self.containerFinanceiro,
                                     bg=dict_cores["corPadrao"],
                                     fg="black",
                                     width=60)
-        self.entryRetirarValor.place(x=240, y=200)
+        self.entryRetirarValor.place(x=240, y=300)
 
-        self.btnRetirarValor = Button(self.mainContainer,
+        self.btnRetirarValor = Button(self.containerFinanceiro,
                                       bg=dict_cores["verde"],
                                       fg="white",
                                       borderwidth=0,
-                                      text="Retirar valor")
-        self.btnRetirarValor.place(x=500, y=230)
+                                      text="Retirar valor",
+                                      command=self.retirarValor)
+        self.btnRetirarValor.place(x=500, y=330)
 
         # EXIBINDO SALDO
 
-        self.labelModoFinanceiro3 = Label(self.mainContainer,
+        self.labelModoFinanceiro3 = Label(self.containerFinanceiro,
                                     bg=dict_cores["corPadrao"],
                                     fg=dict_cores["verde"],
                                     text="SALDO ATUAL DA LOJA")
-        self.labelModoFinanceiro3.place(x=100, y=270)
+        self.labelModoFinanceiro3.place(x=100, y=370)
 
-        self.labelSaldo = Label(self.mainContainer,
+        self.labelSaldo = Label(self.containerFinanceiro,
                                     bg=dict_cores["corPadrao"],
                                     fg=dict_cores["verde"],
-                                    text="R$")
-        self.labelSaldo.place(x=250, y=270)
+                                    text=f"R$ {self.saldo}")
+        self.labelSaldo.place(x=250, y=370)
 
-        self.elementosModoFinanceiro = [self.labelModoFinanceiro1, self.labelModoFinanceiro2, self.labelModoFinanceiro3, self.labelAdicionarValor, self.entryAdicionarValor, self.btnAdicionarValor, self.labelRetirarValor, self.entryRetirarValor, self.btnRetirarValor, self.labelSaldo]
+        self.mostradorFinanceiro = Label(self.containerFinanceiro,
+                               bg=dict_cores["corPadrao"],
+                               fg=dict_cores["roxo"],
+                               width=100,
+                               height=5,
+                               anchor="w",
+                               text="")
+        self.mostradorFinanceiro.place(x=100, y=520)
 
 
+    def adicionarValor(self):
+        self.saldo += float(self.entryAdicionarValor.get())
+        self.labelSaldo["text"] = f"R$ {self.saldo:.2f}"
+        self.mostradorFinanceiro["text"] = "VALOR ADICIONADO COM SUCESSO"
+        # Adicionar sleep
 
+
+    def retirarValor(self):
+        self.saldo -= float(self.entryRetirarValor.get())
+        self.labelSaldo["text"] = f"R$ {self.saldo:.2f}"
+        self.mostradorFinanceiro["text"] = "VALOR RETIRADO COM SUCESSO"
+        # Adicionar sleep
 
 
 
