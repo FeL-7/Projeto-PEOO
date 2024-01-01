@@ -100,6 +100,9 @@ class App:
     def ativarModoTintas(self):
         self.background.destroy()
 
+        self.statusTelaModoTintas = "Criada"
+
+
         # PARA ADICIONAR UMA COR
 
         self.labelModoCor1 = Label(self.mainContainer,
@@ -193,14 +196,32 @@ class App:
                                       text="Listar cor")
         self.btnListarCor.place(x=500, y=360)
 
-        self.elementosModoTintas = [self.labelModoCor1, self.labelModoCor2, self.labelModoCor3, self.labelAdicionarCor1, self.entryAdicionarCor2, self.labelAdicionarCor2, self.entryAdicionarCor1, self.entryAdicionarCor2, self.btnAdicionarCor, self.labelExcluirCor1, self.entryExcluirCor, self.btnExcluirCor, self.labelModoCor3, self.labelListarCor1, self.entryListarCor1, self.btnListarCor]
+        self.elementosModoTintas = [self.labelModoCor1, self.labelModoCor2, self.labelModoCor3, 
+                                    self.labelAdicionarCor1, self.entryAdicionarCor2, self.labelAdicionarCor2, 
+                                    self.entryAdicionarCor1, self.entryAdicionarCor2, self.btnAdicionarCor, 
+                                    self.labelExcluirCor1, self.entryExcluirCor, self.btnExcluirCor, self.labelModoCor3, 
+                                    self.labelListarCor1, self.entryListarCor1, self.btnListarCor]
+
+
+        if self.statusTelaModoFinanceiro == "Criada":
+            for i in self.elementosModoFinanceiro:
+                i.destroy()
+
+            self.statusTelaModoFinanceiro = "Destruída"
+        
 
 
     def ativarModoFinanceiro(self):
         self.background.destroy()
 
-        for i in self.elementosModoTintas:
-            i.destroy()
+        self.statusTelaModoFinanceiro = "Criada"
+
+        if self.statusTelaModoTintas == "Criada":
+            for i in self.elementosModoTintas:
+                i.destroy()
+
+            self.statusTelaModoTintas = "Destruída"
+
 
         # ADICIONANDO AO SALDO
 
@@ -269,6 +290,9 @@ class App:
                                     fg=dict_cores["verde"],
                                     text="R$")
         self.labelSaldo.place(x=250, y=270)
+
+        self.elementosModoFinanceiro = [self.labelModoFinanceiro1, self.labelModoFinanceiro2, self.labelModoFinanceiro3, self.labelAdicionarValor, self.entryAdicionarValor, self.btnAdicionarValor, self.labelRetirarValor, self.entryRetirarValor, self.btnRetirarValor, self.labelSaldo]
+
 
 
 
