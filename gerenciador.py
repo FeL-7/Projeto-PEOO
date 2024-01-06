@@ -363,6 +363,7 @@ class App:
                                text="")
         self.mostradorFinanceiro.place(x=100, y=520)
 
+
     def mudarTema(self):
         if self.temaAtual == "claro":
             dict_cores["corPadrao"] = cores_tema[1]

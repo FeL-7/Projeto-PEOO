@@ -33,6 +33,7 @@ def listar_cores():
     for cor in cores:
         print(cor)
 
+
 def excluir_cor():
     cor = input("Insira o NOME da cor que deseja excluir")
     sql.execute(f"DELETE FROM cores WHERE nome = '{cor}'")
