@@ -401,6 +401,7 @@ class App:
         self.mostradorTintas["text"] = "Cor excluída com sucesso"
         self.janela.after(3000, self.apagar_msgTintas)
 
+
     def exibirCor(self):
         self.sql.execute(f"SELECT hexcode FROM cores WHERE nome = '{str(self.entryExibirCor1.get().upper())}'")
 
@@ -420,8 +421,6 @@ class App:
         self.labelNomeCor["text"] = self.nomeCor
         self.labelNomeCor["bg"] = "white"
         self.labelNomeCor["fg"] = "black"
-
-
 
 
     def adicionarValor(self):
