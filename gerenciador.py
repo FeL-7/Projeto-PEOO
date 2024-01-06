@@ -3,10 +3,17 @@ from tkinter import font
 from PIL import ImageTk, Image
 import sqlite3
 
-claro = "#f5f7fc"
-escuro = "#2c455c"
+"""ESTILIZAR:
+FONTE
+CAMPOS ENTRY (TIRAR BORDA, COLOCAR UMA LINHA EMBAIXO E AJEITAR AS CORES AO TROCAR DE TEMA)"""
 
-dict_cores = {"corPadrao": claro, "lilas": "#746fff", "roxo": "#5e5bc9", "verde": "#00c6ab"}
+
+# claro = "#f5f7fc"
+# escuro = "#2c455c"
+
+cores_tema = ["#f5f7fc", "#2c455c"]
+
+dict_cores = {"corPadrao": cores_tema[0], "lilas": "#746fff", "roxo": "#5e5bc9", "verde": "#00c6ab"}
 
 class App:
     def __init__(self):
@@ -16,8 +23,11 @@ class App:
         self.janela.configure(bg=dict_cores["corPadrao"])
         self.janela.resizable(width=False, height=False)
         
-        self.icone = PhotoImage(file="PEOO\Projeto-PEOO\imagens\icone.png")
+        self.icone = PhotoImage(file="imagens\icone.png")
         self.janela.iconphoto(False, self.icone)
+
+        self.temaAtual = "claro"
+        self.modoAtual = ""
 
         self.saldo = 0.00
 
@@ -25,7 +35,7 @@ class App:
         self.sql = self.conexao.cursor()
 
 
-        # BARRA LATERAL (AINDA FALTA ADICIONAR FUNCIONALIDADE PARA TROCA DE TEMA)
+        # BARRA LATERAL
 
         self.barraLateral = Frame(self.janela, 
                                    width=260,
@@ -33,7 +43,7 @@ class App:
                                    bg=dict_cores["roxo"])
         self.barraLateral.place(x=0, y=0)
 
-        self.img_perfilOriginal = Image.open("PEOO\Projeto-PEOO\imagens\perfil.jpg")
+        self.img_perfilOriginal = Image.open("imagens\perfil.jpg")
         self.img_perfilAlterada = self.img_perfilOriginal.resize((150, 170))
         self.img_perfil = ImageTk.PhotoImage(self.img_perfilAlterada)
 
@@ -43,14 +53,14 @@ class App:
         self.nome_usuario = Label(self.barraLateral,
                                   text="Sr. Gerson 'Coringa'",
                                   bg=dict_cores["roxo"],
-                                  fg=claro)
+                                  fg=cores_tema[0])
         self.nome_usuario.place(x=70, y=230)
 
         self.fonte1 = font.Font(family="Tw Cen MT", size=16, weight="normal", slant="roman", underline=False)
         
         self.btn_modoTintas = Button(self.barraLateral,
                                      bg=dict_cores["roxo"],
-                                     fg=claro,
+                                     fg=cores_tema[0],
                                      text="Gerenciar Tintas",
                                      font=self.fonte1,
                                      borderwidth=0,
@@ -59,12 +69,22 @@ class App:
 
         self.btn_modoFinanceiro = Button(self.barraLateral,
                                         bg=dict_cores["roxo"],
-                                        fg=claro,
+                                        fg=cores_tema[0],
                                         text="Controle Financeiro",
                                         font=self.fonte1,
                                         borderwidth=0,
                                         command=self.ativarModoFinanceiro)
         self.btn_modoFinanceiro.place(x=45, y=380)
+
+        self.img_trocarTema = PhotoImage(file="imagens\mudar_tema.png").subsample(12)
+
+        self.btn_trocarTema = Button(self.barraLateral,
+                                     bg=dict_cores["roxo"],
+                                     fg=cores_tema[0],
+                                     borderwidth=0,
+                                     image=self.img_trocarTema,
+                                     command=self.mudarTema)
+        self.btn_trocarTema.place(x=20, y=600)
 
 
         #CONTEÚDO PRINCIPAL
@@ -76,7 +96,7 @@ class App:
                                    )
         self.mainContainer.place(x=260, y=0)
 
-        self.background_img = ImageTk.PhotoImage(Image.open("PEOO\Projeto-PEOO\imagens\img-background.jpg"))
+        self.background_img = ImageTk.PhotoImage(Image.open("imagens\img-background.jpg"))
         self.background = Label(self.mainContainer,
                                 width=940,
                                 height=670,
@@ -100,6 +120,8 @@ class App:
 
 
     def ativarModoTintas(self):
+
+        self.modoAtual = "tintas"
 
         self.containerTintas = Frame(self.mainContainer,
                                    width=940,
@@ -132,7 +154,8 @@ class App:
         self.entryAdicionarCor1 = Entry(self.containerTintas,
                                     bg=dict_cores["corPadrao"],
                                     fg="black",
-                                    width=60)
+                                    width=60,
+                                    borderwidth=0)
         self.entryAdicionarCor1.place(x=240, y=140)
 
         self.btnAdicionarCor = Button(self.containerTintas,
@@ -208,6 +231,8 @@ class App:
 
 
     def ativarModoFinanceiro(self):
+
+        self.modoAtual = "financeiro"
 
         self.containerFinanceiro = Frame(self.mainContainer,
                                    width=940,
@@ -301,21 +326,36 @@ class App:
                                text="")
         self.mostradorFinanceiro.place(x=100, y=520)
 
+    def mudarTema(self):
+        if self.temaAtual == "claro":
+            dict_cores["corPadrao"] = cores_tema[1]
+            self.temaAtual = "escuro"
+        else:
+            dict_cores["corPadrao"] = cores_tema[0]
+            self.temaAtual = "claro"
+
+        if self.modoAtual == "tintas":
+            self.ativarModoTintas()
+        elif self.modoAtual == "financeiro":
+            self.ativarModoFinanceiro()
+
+
 
     def adicionarValor(self):
         self.saldo += float(self.entryAdicionarValor.get())
         self.labelSaldo["text"] = f"R$ {self.saldo:.2f}"
         self.mostradorFinanceiro["text"] = "VALOR ADICIONADO COM SUCESSO"
-        # Adicionar sleep
+        self.janela.after(3000, self.apagar_msg)
 
 
     def retirarValor(self):
         self.saldo -= float(self.entryRetirarValor.get())
         self.labelSaldo["text"] = f"R$ {self.saldo:.2f}"
         self.mostradorFinanceiro["text"] = "VALOR RETIRADO COM SUCESSO"
-        # Adicionar sleep
+        self.janela.after(3000, self.apagar_msg)
 
-
+    def apagar_msg(self):
+        self.mostradorFinanceiro["text"] = ''
 
 
 
