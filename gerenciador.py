@@ -1,19 +1,19 @@
 from tkinter import *
 from tkinter import font
+from tkinter import colorchooser
 from PIL import ImageTk, Image
 import sqlite3
 
 """ESTILIZAR:
-FONTE
-CAMPOS ENTRY (TIRAR BORDA, COLOCAR UMA LINHA EMBAIXO E AJEITAR AS CORES AO TROCAR DE TEMA)"""
+FONTE"""
 
 
 # claro = "#f5f7fc"
-# escuro = "#2c455c"
+# escuro = "#232833"
 
-cores_tema = ["#f5f7fc", "#2c455c"]
+cores_tema = ["#f5f7fc", "#232833"]
 
-dict_cores = {"corPadrao": cores_tema[0], "lilas": "#746fff", "roxo": "#5e5bc9", "verde": "#00c6ab"}
+dict_cores = {"corPadrao": cores_tema[0], "lilas": "#746fff", "roxo": "#5e5bc9", "verde": "#00c6ab", "fgEntry": "#000000", "vermelho": "#eb0626"}
 
 class App:
     def __init__(self):
@@ -153,43 +153,58 @@ class App:
 
         self.entryAdicionarCor1 = Entry(self.containerTintas,
                                     bg=dict_cores["corPadrao"],
-                                    fg="black",
-                                    width=60,
+                                    fg=dict_cores["fgEntry"],
+                                    width=41,
                                     borderwidth=0)
         self.entryAdicionarCor1.place(x=240, y=140)
+
+        self.linha1 = Frame(self.containerTintas,
+                            bg=dict_cores["verde"],
+                            height=1,
+                            width=250)
+        self.linha1.place(x=240, y=160)
 
         self.btnAdicionarCor = Button(self.containerTintas,
                                       bg=dict_cores["verde"],
                                       fg="white",
                                       borderwidth=0,
-                                      text="Escolher tom da cor")
+                                      text="Escolher tom da cor",
+                                      command=self.adicionarCor)
         self.btnAdicionarCor.place(x=490, y=200)
 
         # PARA EXCLUIR UMA COR
 
         self.labelModoCor2 = Label(self.containerTintas,
                                     bg=dict_cores["corPadrao"],
-                                    fg=dict_cores["verde"],
+                                    fg=dict_cores["vermelho"],
                                     text="EXCLUIR COR JÁ EXISTENTE")
         self.labelModoCor2.place(x=100, y=250)
 
         self.labelExcluirCor1 = Label(self.containerTintas,
                                     bg=dict_cores["corPadrao"],
-                                    fg=dict_cores["verde"],
+                                    fg=dict_cores["vermelho"],
                                     text="NOME DA COR:")
         self.labelExcluirCor1.place(x=100, y=280)
 
         self.entryExcluirCor = Entry(self.containerTintas,
                                     bg=dict_cores["corPadrao"],
-                                    fg="black",
-                                    width=60)
-        self.entryExcluirCor.place(x=240, y=280)
+                                    fg=dict_cores["fgEntry"],
+                                    borderwidth=0,
+                                    width=41)
+        self.entryExcluirCor.place(x=205, y=280)
+
+        self.linha2 = Frame(self.containerTintas,
+                            bg=dict_cores["vermelho"],
+                            height=1,
+                            width=250)
+        self.linha2.place(x=205, y=300)
 
         self.btnExcluirCor = Button(self.containerTintas,
-                                      bg=dict_cores["verde"],
+                                      bg=dict_cores["vermelho"],
                                       fg="white",
                                       borderwidth=0,
-                                      text="Excluir cor")
+                                      text="Excluir cor",
+                                      command=self.excluirCor)
         self.btnExcluirCor.place(x=500, y=310)
 
         # PARA LISTAR COR
@@ -197,27 +212,35 @@ class App:
         self.labelModoCor3 = Label(self.containerTintas,
                                     bg=dict_cores["corPadrao"],
                                     fg=dict_cores["verde"],
-                                    text="LISTAR CORES")
+                                    text="EXIBIR COR")
         self.labelModoCor3.place(x=100, y=350)
 
-        self.labelListarCor1 = Label(self.containerTintas,
+        self.labelExibirCor1 = Label(self.containerTintas,
                                     bg=dict_cores["corPadrao"],
                                     fg=dict_cores["verde"],
                                     text="NOME DA COR:")
-        self.labelListarCor1.place(x=100, y=380)
+        self.labelExibirCor1.place(x=100, y=380)
 
-        self.entryListarCor1 = Entry(self.containerTintas,
+        self.entryExibirCor1 = Entry(self.containerTintas,
                                     bg=dict_cores["corPadrao"],
-                                    fg="black",
-                                    width=60)
-        self.entryListarCor1.place(x=240, y=410)
+                                    fg=dict_cores["fgEntry"],
+                                    borderwidth=0,
+                                    width=41)
+        self.entryExibirCor1.place(x=210, y=380)
 
-        self.btnListarCor = Button(self.containerTintas,
+        self.linha3 = Frame(self.containerTintas,
+                            bg=dict_cores["verde"],
+                            height=1,
+                            width=250)
+        self.linha3.place(x=210, y=400)
+
+        self.btnExibirCor = Button(self.containerTintas,
                                       bg=dict_cores["verde"],
                                       fg="white",
                                       borderwidth=0,
-                                      text="Listar cor")
-        self.btnListarCor.place(x=500, y=440)
+                                      text="Exibir cor",
+                                      command=self.exibirCor)
+        self.btnExibirCor.place(x=500, y=440)
         
         self.mostradorTintas = Label(self.containerTintas,
                                bg=dict_cores["corPadrao"],
@@ -225,7 +248,7 @@ class App:
                                width=100,
                                height=5,
                                anchor="w",
-                               text="Cor inserida com sucesso")
+                               text="")
         self.mostradorTintas.place(x=100, y=520)
         
 
@@ -263,9 +286,16 @@ class App:
 
         self.entryAdicionarValor = Entry(self.containerFinanceiro,
                                     bg=dict_cores["corPadrao"],
-                                    fg="black",
-                                    width=60)
-        self.entryAdicionarValor.place(x=240, y=160)
+                                    fg=dict_cores["fgEntry"],
+                                    borderwidth=0,
+                                    width=41)
+        self.entryAdicionarValor.place(x=245, y=160)
+
+        self.linha4 = Frame(self.containerFinanceiro,
+                            bg=dict_cores["verde"],
+                            height=1,
+                            width=250)
+        self.linha4.place(x=245, y=180)
 
         self.btnAdicionarValor = Button(self.containerFinanceiro,
                                       bg=dict_cores["verde"],
@@ -279,29 +309,36 @@ class App:
 
         self.labelModoFinanceiro2 = Label(self.containerFinanceiro,
                                     bg=dict_cores["corPadrao"],
-                                    fg=dict_cores["verde"],
+                                    fg=dict_cores["vermelho"],
                                     text="RETIRAR VALOR DO SALDO")
         self.labelModoFinanceiro2.place(x=100, y=270)
 
         self.labelRetirarValor = Label(self.containerFinanceiro,
                                     bg=dict_cores["corPadrao"],
-                                    fg=dict_cores["verde"],
+                                    fg=dict_cores["vermelho"],
                                     text="VALOR A RETIRAR:")
         self.labelRetirarValor.place(x=100, y=300)
 
         self.entryRetirarValor = Entry(self.containerFinanceiro,
                                     bg=dict_cores["corPadrao"],
-                                    fg="black",
-                                    width=60)
-        self.entryRetirarValor.place(x=240, y=300)
+                                    fg=dict_cores["fgEntry"],
+                                    borderwidth=0,
+                                    width=41)
+        self.entryRetirarValor.place(x=210, y=300)
+
+        self.linha5 = Frame(self.containerFinanceiro,
+                            bg=dict_cores["vermelho"],
+                            height=1,
+                            width=250)
+        self.linha5.place(x=210, y=320)
 
         self.btnRetirarValor = Button(self.containerFinanceiro,
-                                      bg=dict_cores["verde"],
+                                      bg=dict_cores["vermelho"],
                                       fg="white",
                                       borderwidth=0,
                                       text="Retirar valor",
                                       command=self.retirarValor)
-        self.btnRetirarValor.place(x=500, y=330)
+        self.btnRetirarValor.place(x=500, y=380)
 
         # EXIBINDO SALDO
 
@@ -309,13 +346,13 @@ class App:
                                     bg=dict_cores["corPadrao"],
                                     fg=dict_cores["verde"],
                                     text="SALDO ATUAL DA LOJA")
-        self.labelModoFinanceiro3.place(x=100, y=370)
+        self.labelModoFinanceiro3.place(x=100, y=430)
 
         self.labelSaldo = Label(self.containerFinanceiro,
                                     bg=dict_cores["corPadrao"],
                                     fg=dict_cores["verde"],
                                     text=f"R$ {self.saldo}")
-        self.labelSaldo.place(x=250, y=370)
+        self.labelSaldo.place(x=250, y=430)
 
         self.mostradorFinanceiro = Label(self.containerFinanceiro,
                                bg=dict_cores["corPadrao"],
@@ -329,9 +366,11 @@ class App:
     def mudarTema(self):
         if self.temaAtual == "claro":
             dict_cores["corPadrao"] = cores_tema[1]
+            dict_cores["fgEntry"] = "#ffffff"
             self.temaAtual = "escuro"
         else:
             dict_cores["corPadrao"] = cores_tema[0]
+            dict_cores["fgEntry"] = "#000000"
             self.temaAtual = "claro"
 
         if self.modoAtual == "tintas":
@@ -340,21 +379,78 @@ class App:
             self.ativarModoFinanceiro()
 
 
+    def adicionarCor(self):
+        self.nomeCor = str(self.entryAdicionarCor1.get()).upper()
+        self.tomCor = colorchooser.askcolor()[1]
+
+        self.sql.execute(f"INSERT INTO cores (nome, hexcode) VALUES ('{self.nomeCor}', '{self.tomCor}')")
+        self.conexao.commit()
+
+        self.mostradorTintas["bg"] = dict_cores["corPadrao"]
+        self.mostradorTintas["text"] = "Cor inserida com sucesso"
+        self.janela.after(3000, self.apagar_msgTintas)
+
+
+    def excluirCor(self):
+        self.nomeCor = str(self.entryExcluirCor.get()).upper()
+
+        self.sql.execute(f"DELETE FROM cores WHERE nome = '{self.nomeCor}'")
+        self.conexao.commit()
+
+        self.mostradorTintas["bg"] = dict_cores["corPadrao"]
+        self.mostradorTintas["text"] = "Cor excluída com sucesso"
+        self.janela.after(3000, self.apagar_msgTintas)
+
+    def exibirCor(self):
+        self.sql.execute(f"SELECT hexcode FROM cores WHERE nome = '{str(self.entryExibirCor1.get().upper())}'")
+
+        self.cor = self.sql.fetchone()
+
+        self.mostradorTintas["bg"] = self.cor
+
+
+        self.labelNomeCor = Label(self.mostradorTintas,
+                                  anchor="center")
+        self.labelNomeCor.place(x=10, y=10)
+        
+        self.sql.execute(f"SELECT nome FROM cores WHERE nome = '{str(self.entryExibirCor1.get().upper())}'")
+
+        self.nomeCor = self.sql.fetchone()
+
+        self.labelNomeCor["text"] = self.nomeCor
+        self.labelNomeCor["bg"] = "white"
+        self.labelNomeCor["fg"] = "black"
+
+
+
 
     def adicionarValor(self):
         self.saldo += float(self.entryAdicionarValor.get())
         self.labelSaldo["text"] = f"R$ {self.saldo:.2f}"
+        if self.saldo < 0:
+            self.labelSaldo["fg"] = dict_cores["vermelho"]
+        else:
+            self.labelSaldo["fg"] = dict_cores["verde"]
+
         self.mostradorFinanceiro["text"] = "VALOR ADICIONADO COM SUCESSO"
-        self.janela.after(3000, self.apagar_msg)
+        self.janela.after(3000, self.apagar_msgFinanceiro)
 
 
     def retirarValor(self):
         self.saldo -= float(self.entryRetirarValor.get())
         self.labelSaldo["text"] = f"R$ {self.saldo:.2f}"
-        self.mostradorFinanceiro["text"] = "VALOR RETIRADO COM SUCESSO"
-        self.janela.after(3000, self.apagar_msg)
+        if self.saldo < 0:
+            self.labelSaldo["fg"] = dict_cores["vermelho"]
+        else:
+            self.labelSaldo["fg"] = dict_cores["verde"]
 
-    def apagar_msg(self):
+        self.mostradorFinanceiro["text"] = "VALOR RETIRADO COM SUCESSO"
+        self.janela.after(3000, self.apagar_msgFinanceiro)
+
+    def apagar_msgTintas(self):
+        self.mostradorTintas["text"] = ''
+
+    def apagar_msgFinanceiro(self):
         self.mostradorFinanceiro["text"] = ''
 
 
