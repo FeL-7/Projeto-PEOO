@@ -1,3 +1,4 @@
+from time import sleep
 from tkinter import *
 from tkinter import font
 from tkinter import colorchooser
@@ -10,12 +11,10 @@ import pickle
 FONTE
 
 INSERIR:
-FOR
 WHILE
 TRATAMENTO DE EXCEÇÕES
 
-MELHORAR/REVER
-SERIALIZAÇÃO"""
+MELHORAR/REVER"""
 
 
 # claro = "#f5f7fc"
@@ -27,6 +26,11 @@ dict_cores = {"corPadrao": cores_tema[0], "lilas": "#746fff", "roxo": "#5e5bc9",
 
 class App:
     def __init__(self):
+        print("INICIANDO APLICAÇÃO EM:")
+        for i in range (3, 0, -1):
+            print(i)
+            sleep(1)
+
         self.janela = Tk()
         self.janela.title("Gerson Pinturas")
         self.janela.geometry("1200x670")
@@ -41,8 +45,11 @@ class App:
 
         self.saldo = 0.00
 
-        self.conexao = sqlite3.connect("estoqueDeTintas.db")
-        self.sql = self.conexao.cursor()
+        try:
+            self.conexao = sqlite3.connect("estoqueDeTintas.db")
+            self.sql = self.conexao.cursor()
+        except ConnectionError:
+            print("Ocorreu um erro durante a conexão")
 
 
         # BARRA LATERAL
@@ -53,9 +60,12 @@ class App:
                                    bg=dict_cores["roxo"])
         self.barraLateral.place(x=0, y=0)
 
-        self.img_perfilOriginal = Image.open("imagens\perfil.jpg")
-        self.img_perfilAlterada = self.img_perfilOriginal.resize((150, 170))
-        self.img_perfil = ImageTk.PhotoImage(self.img_perfilAlterada)
+        try:
+            self.img_perfilOriginal = Image.open("imagens\perfil.jpg")
+            self.img_perfilAlterada = self.img_perfilOriginal.resize((150, 170))
+            self.img_perfil = ImageTk.PhotoImage(self.img_perfilAlterada)
+        except FileNotFoundError:
+            print("Arquivo não encontrado. Por favor, verifique o caminho inserido.")
 
         self.icone_perfil = Label(self.barraLateral,
                                   image=self.img_perfil)
@@ -85,8 +95,10 @@ class App:
                                         borderwidth=0,
                                         command=self.ativarModoFinanceiro)
         self.btn_modoFinanceiro.place(x=45, y=380)
-
-        self.img_trocarTema = PhotoImage(file="imagens\mudar_tema.png").subsample(12)
+        try:
+            self.img_trocarTema = PhotoImage(file="imagens\mudar_tema.png").subsample(12)
+        except FileNotFoundError:
+            print("Arquivo não encontrado. Por favor, verifique o caminho inserido.")
 
         self.btn_trocarTema = Button(self.barraLateral,
                                      bg=dict_cores["roxo"],
@@ -106,14 +118,17 @@ class App:
                                    )
         self.mainContainer.place(x=260, y=0)
 
-        self.background_img = ImageTk.PhotoImage(Image.open("imagens\img-background.jpg"))
-        self.background = Label(self.mainContainer,
-                                width=940,
-                                height=670,
-                                bg=dict_cores["corPadrao"],
-                                image=self.background_img
-                                )
-        self.background.place(x=-3, y=-1)
+        try:
+            self.background_img = ImageTk.PhotoImage(Image.open("imagens\img-background.jpg"))
+            self.background = Label(self.mainContainer,
+                                    width=940,
+                                    height=670,
+                                    bg=dict_cores["corPadrao"],
+                                    image=self.background_img
+                                    )
+            self.background.place(x=-3, y=-1)
+        except FileNotFoundError:
+            print("Arquivo não encontrado. Por favor, verifique o caminho inserido.")
         
 
         # RODAPÉ
@@ -125,6 +140,7 @@ class App:
         self.rodape.place(x=260,y=630)
 
 
+        self.janela.protocol("WM_DELETE_WINDOW", self.agradecimento)
 
         self.janela.mainloop()
 
@@ -389,6 +405,12 @@ class App:
         for cor in self.dadosCores:
             pickle.dump(cor, self.arq)
 
+        self.arq.close()
+
+        self.mostradorTintas["bg"] = dict_cores["corPadrao"]
+        self.mostradorTintas["text"] = "Serialização realizada com sucesso"
+        self.janela.after(3000, self.apagar_msgTintas)
+
 
     def mudarTema(self):
         if self.temaAtual == "claro":
@@ -410,82 +432,105 @@ class App:
         self.nomeCor = str(self.entryAdicionarCor1.get()).upper()
         self.tomCor = colorchooser.askcolor()[1]
 
-        self.sql.execute(f"INSERT INTO cores (nome, hexcode) VALUES ('{self.nomeCor}', '{self.tomCor}')")
-        self.conexao.commit()
-
-        self.mostradorTintas["bg"] = dict_cores["corPadrao"]
-        self.mostradorTintas["text"] = "Cor inserida com sucesso"
-        self.janela.after(3000, self.apagar_msgTintas)
-
-
-    def excluirCor(self):
-        self.sql.execute(f"SELECT nome FROM cores WHERE nome = '{str(self.entryExcluirCor.get().upper())}'")
-
-        self.item = self.sql.fetchone()
-
-        if self.item:
-            self.nomeCor = str(self.entryExcluirCor.get()).upper()
-
-            self.sql.execute(f"DELETE FROM cores WHERE nome = '{self.nomeCor}'")
+        try:
+            self.sql.execute(f"INSERT INTO cores (nome, hexcode) VALUES ('{self.nomeCor}', '{self.tomCor}')")
             self.conexao.commit()
 
             self.mostradorTintas["bg"] = dict_cores["corPadrao"]
-            self.mostradorTintas["text"] = "Cor excluída com sucesso"
+            self.mostradorTintas["text"] = "Cor inserida com sucesso"
             self.janela.after(3000, self.apagar_msgTintas)
-        else:
-            self.mostradorTintas["bg"] = dict_cores["corPadrao"]
-            self.mostradorTintas["text"] = "Cor não encontrada no banco de dados"
+
+        except sqlite3.OperationalError:
+            self.mostradorTintas["text"] = "Ocorreu um problema durante a inserção no banco de dados."
+            self.janela.after(3000, self.apagar_msgTintas)
+
+    def excluirCor(self):
+        try:
+
+            self.sql.execute(f"SELECT nome FROM cores WHERE nome = '{str(self.entryExcluirCor.get().upper())}'")
+
+            self.item = self.sql.fetchone()
+
+            if self.item:
+                self.nomeCor = str(self.entryExcluirCor.get()).upper()
+
+                self.sql.execute(f"DELETE FROM cores WHERE nome = '{self.nomeCor}'")
+                self.conexao.commit()
+
+                self.mostradorTintas["bg"] = dict_cores["corPadrao"]
+                self.mostradorTintas["text"] = "Cor excluída com sucesso"
+                self.janela.after(3000, self.apagar_msgTintas)
+            else:
+                self.mostradorTintas["bg"] = dict_cores["corPadrao"]
+                self.mostradorTintas["text"] = "Cor não encontrada no banco de dados"
+                self.janela.after(3000, self.apagar_msgTintas)
+
+        except sqlite3.OperationalError:
+            self.mostradorTintas["text"] = "Ocorreu um problema durante a exclusão no banco de dados."
             self.janela.after(3000, self.apagar_msgTintas)
 
 
     def exibirCor(self):
-        self.sql.execute(f"SELECT hexcode FROM cores WHERE nome = '{str(self.entryExibirCor1.get().upper())}'")
+        try:
+            self.sql.execute(f"SELECT hexcode FROM cores WHERE nome = '{str(self.entryExibirCor1.get().upper())}'")
 
-        self.cor = self.sql.fetchone()
+            self.cor = self.sql.fetchone()
 
-        if self.cor:
-            self.mostradorTintas["bg"] = self.cor
+            if self.cor:
+                self.mostradorTintas["bg"] = self.cor
 
 
-            self.labelNomeCor = Label(self.mostradorTintas,
-                                    anchor="center")
-            self.labelNomeCor.place(x=10, y=10)
-            
-            self.sql.execute(f"SELECT nome FROM cores WHERE nome = '{str(self.entryExibirCor1.get().upper())}'")
+                self.labelNomeCor = Label(self.mostradorTintas,
+                                        anchor="center")
+                self.labelNomeCor.place(x=10, y=10)
+                
+                self.sql.execute(f"SELECT nome FROM cores WHERE nome = '{str(self.entryExibirCor1.get().upper())}'")
 
-            self.nomeCor = self.sql.fetchone()
+                self.nomeCor = self.sql.fetchone()
 
-            self.labelNomeCor["text"] = self.nomeCor
-            self.labelNomeCor["bg"] = "white"
-            self.labelNomeCor["fg"] = "black"
-        else:
-            self.mostradorTintas["bg"] = dict_cores["corPadrao"]
-            self.mostradorTintas["text"] = "Cor não encontrada no banco de dados"
+                self.labelNomeCor["text"] = self.nomeCor
+                self.labelNomeCor["bg"] = "white"
+                self.labelNomeCor["fg"] = "black"
+            else:
+                self.mostradorTintas["bg"] = dict_cores["corPadrao"]
+                self.mostradorTintas["text"] = "Cor não encontrada no banco de dados"
+                self.janela.after(3000, self.apagar_msgTintas)
+        except sqlite3.OperationalError:
+            self.mostradorTintas["text"] = "Ocorreu um problema durante a exibição."
             self.janela.after(3000, self.apagar_msgTintas)
 
-
     def adicionarValor(self):
-        self.saldo += float(self.entryAdicionarValor.get())
-        self.labelSaldo["text"] = f"R$ {self.saldo:.2f}"
-        if self.saldo < 0:
-            self.labelSaldo["fg"] = dict_cores["vermelho"]
-        else:
-            self.labelSaldo["fg"] = dict_cores["verde"]
+        try:
+            self.saldo += float(self.entryAdicionarValor.get())
+            self.labelSaldo["text"] = f"R$ {self.saldo:.2f}"
+            if self.saldo < 0:
+                self.labelSaldo["fg"] = dict_cores["vermelho"]
+            else:
+                self.labelSaldo["fg"] = dict_cores["verde"]
 
-        self.mostradorFinanceiro["text"] = "VALOR ADICIONADO COM SUCESSO"
-        self.janela.after(3000, self.apagar_msgFinanceiro)
+            self.mostradorFinanceiro["text"] = "VALOR ADICIONADO COM SUCESSO"
+            self.janela.after(3000, self.apagar_msgFinanceiro)
+            
+        except ValueError:
+            self.mostradorFinanceiro["text"] = "Insira apenas números"
+            self.janela.after(3000, self.apagar_msgFinanceiro)
 
 
     def retirarValor(self):
-        self.saldo -= float(self.entryRetirarValor.get())
-        self.labelSaldo["text"] = f"R$ {self.saldo:.2f}"
-        if self.saldo < 0:
-            self.labelSaldo["fg"] = dict_cores["vermelho"]
-        else:
-            self.labelSaldo["fg"] = dict_cores["verde"]
+        try:
+            self.saldo -= float(self.entryRetirarValor.get())
+            self.labelSaldo["text"] = f"R$ {self.saldo:.2f}"
+            if self.saldo < 0:
+                self.labelSaldo["fg"] = dict_cores["vermelho"]
+            else:
+                self.labelSaldo["fg"] = dict_cores["verde"]
 
-        self.mostradorFinanceiro["text"] = "VALOR RETIRADO COM SUCESSO"
-        self.janela.after(3000, self.apagar_msgFinanceiro)
+            self.mostradorFinanceiro["text"] = "VALOR RETIRADO COM SUCESSO"
+            self.janela.after(3000, self.apagar_msgFinanceiro)
+
+        except ValueError:
+            self.mostradorFinanceiro["text"] = "Insira apenas números"
+            self.janela.after(3000, self.apagar_msgFinanceiro)
 
     def apagar_msgTintas(self):
         self.mostradorTintas["text"] = ''
@@ -494,5 +539,13 @@ class App:
         self.mostradorFinanceiro["text"] = ''
 
 
+    def agradecimento(self):
+        self.janela.destroy()
 
-aplicacao = App()
+        print("Obrigado por utilizar nossos serviços!")
+
+
+try:
+    aplicacao = App()
+except AttributeError:
+    print("Atributo ausente.")
