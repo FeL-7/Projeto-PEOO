@@ -3,9 +3,19 @@ from tkinter import font
 from tkinter import colorchooser
 from PIL import ImageTk, Image
 import sqlite3
+import pickle
+
 
 """ESTILIZAR:
-FONTE"""
+FONTE
+
+INSERIR:
+FOR
+WHILE
+TRATAMENTO DE EXCEÇÕES
+
+MELHORAR/REVER
+SERIALIZAÇÃO"""
 
 
 # claro = "#f5f7fc"
@@ -13,7 +23,7 @@ FONTE"""
 
 cores_tema = ["#f5f7fc", "#232833"]
 
-dict_cores = {"corPadrao": cores_tema[0], "lilas": "#746fff", "roxo": "#5e5bc9", "verde": "#00c6ab", "fgEntry": "#000000", "vermelho": "#eb0626"}
+dict_cores = {"corPadrao": cores_tema[0], "lilas": "#746fff", "roxo": "#5e5bc9", "verde": "#00c6ab", "fgEntry": "#000000", "vermelho": "#eb0626", "laranja": "#eeaa74"}
 
 class App:
     def __init__(self):
@@ -250,7 +260,14 @@ class App:
                                anchor="w",
                                text="")
         self.mostradorTintas.place(x=100, y=520)
-        
+
+        self.btnSerializar = Button(self.containerTintas,
+                                    bg=dict_cores["laranja"],
+                                    fg="white",
+                                    text="Serializar dados",
+                                    borderwidth=0,
+                                    command=self.serializar)
+        self.btnSerializar.place(x=760, y=20)
 
 
     def ativarModoFinanceiro(self):
@@ -364,6 +381,15 @@ class App:
         self.mostradorFinanceiro.place(x=100, y=520)
 
 
+    def serializar(self):
+        self.sql.execute("SELECT * FROM cores")
+        self.dadosCores = self.sql.fetchall()
+
+        self.arq = open('coresSerializadas.txt', 'wb')
+        for cor in self.dadosCores:
+            pickle.dump(cor, self.arq)
+
+
     def mudarTema(self):
         if self.temaAtual == "claro":
             dict_cores["corPadrao"] = cores_tema[1]
@@ -393,14 +419,23 @@ class App:
 
 
     def excluirCor(self):
-        self.nomeCor = str(self.entryExcluirCor.get()).upper()
+        self.sql.execute(f"SELECT nome FROM cores WHERE nome = '{str(self.entryExcluirCor.get().upper())}'")
 
-        self.sql.execute(f"DELETE FROM cores WHERE nome = '{self.nomeCor}'")
-        self.conexao.commit()
+        self.item = self.sql.fetchone()
 
-        self.mostradorTintas["bg"] = dict_cores["corPadrao"]
-        self.mostradorTintas["text"] = "Cor excluída com sucesso"
-        self.janela.after(3000, self.apagar_msgTintas)
+        if self.item:
+            self.nomeCor = str(self.entryExcluirCor.get()).upper()
+
+            self.sql.execute(f"DELETE FROM cores WHERE nome = '{self.nomeCor}'")
+            self.conexao.commit()
+
+            self.mostradorTintas["bg"] = dict_cores["corPadrao"]
+            self.mostradorTintas["text"] = "Cor excluída com sucesso"
+            self.janela.after(3000, self.apagar_msgTintas)
+        else:
+            self.mostradorTintas["bg"] = dict_cores["corPadrao"]
+            self.mostradorTintas["text"] = "Cor não encontrada no banco de dados"
+            self.janela.after(3000, self.apagar_msgTintas)
 
 
     def exibirCor(self):
@@ -408,20 +443,25 @@ class App:
 
         self.cor = self.sql.fetchone()
 
-        self.mostradorTintas["bg"] = self.cor
+        if self.cor:
+            self.mostradorTintas["bg"] = self.cor
 
 
-        self.labelNomeCor = Label(self.mostradorTintas,
-                                  anchor="center")
-        self.labelNomeCor.place(x=10, y=10)
-        
-        self.sql.execute(f"SELECT nome FROM cores WHERE nome = '{str(self.entryExibirCor1.get().upper())}'")
+            self.labelNomeCor = Label(self.mostradorTintas,
+                                    anchor="center")
+            self.labelNomeCor.place(x=10, y=10)
+            
+            self.sql.execute(f"SELECT nome FROM cores WHERE nome = '{str(self.entryExibirCor1.get().upper())}'")
 
-        self.nomeCor = self.sql.fetchone()
+            self.nomeCor = self.sql.fetchone()
 
-        self.labelNomeCor["text"] = self.nomeCor
-        self.labelNomeCor["bg"] = "white"
-        self.labelNomeCor["fg"] = "black"
+            self.labelNomeCor["text"] = self.nomeCor
+            self.labelNomeCor["bg"] = "white"
+            self.labelNomeCor["fg"] = "black"
+        else:
+            self.mostradorTintas["bg"] = dict_cores["corPadrao"]
+            self.mostradorTintas["text"] = "Cor não encontrada no banco de dados"
+            self.janela.after(3000, self.apagar_msgTintas)
 
 
     def adicionarValor(self):
