@@ -12,10 +12,10 @@ Depois coloca o email 'git config --global user.email fulanodetal@exemplo.br'
 Atente-se para o '--global'. Ele só é necessário na primeira vez, se quiser alterar alguma dessas informações, não precisa usar ele de novo.
 Para ver se está tudo certo, você pode dar um 'git --config list'
 
-ATUALIZANDO REPOSITÓRIO (VAI QUE MAIS DE UM TÁ MEXENDO NO MESMO TEMPO)
+ATUALIZANDO REPOSITÓRIO (VAI QUE MAIS DE UMA PESSOA ESTÁ MEXENDO NO MESMO TEMPO)
 'git pull'
 
-ADICIONANDO AS MUDANÇAS FEITAS(SEJAM DE INCLUSÃO OU REMOÇÃO DE ALGO)
+ADICIONANDO AS MUDANÇAS FEITAS(SEJAM DE INCLUSÃO SEJAM DE REMOÇÃO DE ALGO)
 'git add .'
 
 'git commit -m "Mensagem especificando o que fez"'
