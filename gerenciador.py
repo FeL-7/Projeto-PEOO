@@ -44,6 +44,19 @@ class App:
         self.modoAtual = ""
 
         self.saldo = 0.00
+        
+        # Certifique-se de que as fontes estão instaladas
+
+        try:
+
+            self.fonte1 = font.Font(family="Sora", size=16, weight="normal", slant="roman", underline=False)
+
+            self.fonte2 = font.Font(family="Jost", size=16, weight="normal", slant="roman", underline=False)
+
+            self.fonte3 = font.Font(family="Jost", size=12, weight="normal", slant="roman", underline=False)
+
+        except TclError:
+            print("Fontes não instaladas")
 
         try:
             self.conexao = sqlite3.connect("estoqueDeTintas.db")
@@ -71,18 +84,17 @@ class App:
                                   image=self.img_perfil)
         self.icone_perfil.place(x=50, y=50)
         self.nome_usuario = Label(self.barraLateral,
-                                  text="Sr. Gerson 'Coringa'",
+                                  text="Sr. Gerson",
                                   bg=dict_cores["roxo"],
-                                  fg=cores_tema[0])
+                                  fg=cores_tema[0],
+                                  font=self.fonte1)
         self.nome_usuario.place(x=70, y=230)
-
-        self.fonte1 = font.Font(family="Tw Cen MT", size=16, weight="normal", slant="roman", underline=False)
         
         self.btn_modoTintas = Button(self.barraLateral,
                                      bg=dict_cores["roxo"],
                                      fg=cores_tema[0],
                                      text="Gerenciar Tintas",
-                                     font=self.fonte1,
+                                     font=self.fonte2,
                                      borderwidth=0,
                                      command=self.ativarModoTintas)
         self.btn_modoTintas.place(x=55, y=320)
@@ -91,7 +103,7 @@ class App:
                                         bg=dict_cores["roxo"],
                                         fg=cores_tema[0],
                                         text="Controle Financeiro",
-                                        font=self.fonte1,
+                                        font=self.fonte2,
                                         borderwidth=0,
                                         command=self.ativarModoFinanceiro)
         self.btn_modoFinanceiro.place(x=45, y=380)
@@ -159,6 +171,7 @@ class App:
         self.tituloTintas = Label(self.containerTintas,
                                   bg=dict_cores["corPadrao"],
                                   fg=dict_cores["roxo"],
+                                  font=self.fonte2,
                                   text="ESTOQUE DE TINTAS")
         self.tituloTintas.place(x=50, y=30)
 
@@ -168,18 +181,21 @@ class App:
         self.labelModoCor1 = Label(self.containerTintas,
                                     bg=dict_cores["corPadrao"],
                                     fg=dict_cores["verde"],
-                                    text="ADICIONAR NOVA COR")
+                                    font=self.fonte3,
+                                    text="Adicionar nova cor")
         self.labelModoCor1.place(x=100, y=110)
 
         self.labelAdicionarCor1 = Label(self.containerTintas,
                                     bg=dict_cores["corPadrao"],
                                     fg=dict_cores["verde"],
-                                    text="NOME DA NOVA COR:")
+                                    font=self.fonte3,
+                                    text="Nome da nova cor:")
         self.labelAdicionarCor1.place(x=100, y=140)
 
         self.entryAdicionarCor1 = Entry(self.containerTintas,
                                     bg=dict_cores["corPadrao"],
                                     fg=dict_cores["fgEntry"],
+                                    font=self.fonte3,
                                     width=41,
                                     borderwidth=0)
         self.entryAdicionarCor1.place(x=240, y=140)
@@ -195,6 +211,7 @@ class App:
                                       fg="white",
                                       borderwidth=0,
                                       text="Escolher tom da cor",
+                                      font=self.fonte3,
                                       command=self.adicionarCor)
         self.btnAdicionarCor.place(x=490, y=200)
 
@@ -203,18 +220,21 @@ class App:
         self.labelModoCor2 = Label(self.containerTintas,
                                     bg=dict_cores["corPadrao"],
                                     fg=dict_cores["vermelho"],
-                                    text="EXCLUIR COR JÁ EXISTENTE")
+                                    font=self.fonte3,
+                                    text="Excluir cor já existente")
         self.labelModoCor2.place(x=100, y=250)
 
         self.labelExcluirCor1 = Label(self.containerTintas,
                                     bg=dict_cores["corPadrao"],
                                     fg=dict_cores["vermelho"],
-                                    text="NOME DA COR:")
+                                    font=self.fonte3,
+                                    text="Nome da cor:")
         self.labelExcluirCor1.place(x=100, y=280)
 
         self.entryExcluirCor = Entry(self.containerTintas,
                                     bg=dict_cores["corPadrao"],
                                     fg=dict_cores["fgEntry"],
+                                    font=self.fonte3,
                                     borderwidth=0,
                                     width=41)
         self.entryExcluirCor.place(x=205, y=280)
@@ -230,6 +250,7 @@ class App:
                                       fg="white",
                                       borderwidth=0,
                                       text="Excluir cor",
+                                      font=self.fonte3,
                                       command=self.excluirCor)
         self.btnExcluirCor.place(x=500, y=310)
 
@@ -238,19 +259,22 @@ class App:
         self.labelModoCor3 = Label(self.containerTintas,
                                     bg=dict_cores["corPadrao"],
                                     fg=dict_cores["verde"],
-                                    text="EXIBIR COR")
+                                    font=self.fonte3,
+                                    text="Exibir cor")
         self.labelModoCor3.place(x=100, y=350)
 
         self.labelExibirCor1 = Label(self.containerTintas,
                                     bg=dict_cores["corPadrao"],
                                     fg=dict_cores["verde"],
-                                    text="NOME DA COR:")
+                                    font=self.fonte3,
+                                    text="Nome da cor:")
         self.labelExibirCor1.place(x=100, y=380)
 
         self.entryExibirCor1 = Entry(self.containerTintas,
                                     bg=dict_cores["corPadrao"],
                                     fg=dict_cores["fgEntry"],
                                     borderwidth=0,
+                                    font=self.fonte3,
                                     width=41)
         self.entryExibirCor1.place(x=210, y=380)
 
@@ -264,6 +288,7 @@ class App:
                                       bg=dict_cores["verde"],
                                       fg="white",
                                       borderwidth=0,
+                                      font=self.fonte3,
                                       text="Exibir cor",
                                       command=self.exibirCor)
         self.btnExibirCor.place(x=500, y=440)
@@ -272,14 +297,16 @@ class App:
                                bg=dict_cores["corPadrao"],
                                fg=dict_cores["roxo"],
                                width=100,
+                               font=self.fonte3,
                                height=5,
                                anchor="w",
                                text="")
-        self.mostradorTintas.place(x=100, y=520)
+        self.mostradorTintas.place(x=80, y=500)
 
         self.btnSerializar = Button(self.containerTintas,
                                     bg=dict_cores["laranja"],
                                     fg="white",
+                                    font=self.fonte3,
                                     text="Serializar dados",
                                     borderwidth=0,
                                     command=self.serializar)
@@ -299,6 +326,7 @@ class App:
 
         self.tituloFinanceiro = Label(self.containerFinanceiro,
                                       bg=dict_cores["corPadrao"],
+                                      font=self.fonte2,
                                       fg=dict_cores["roxo"],
                                       text="CONTROLE FINANCEIRO")
         self.tituloFinanceiro.place(x=50, y=30)
@@ -308,19 +336,22 @@ class App:
         self.labelModoFinanceiro1 = Label(self.containerFinanceiro,
                                     bg=dict_cores["corPadrao"],
                                     fg=dict_cores["verde"],
-                                    text="ACRESCENTAR NOVO VALOR AO SALDO")
+                                    font=self.fonte3,
+                                    text="Acrescentar novo valor ao saldo")
         self.labelModoFinanceiro1.place(x=100, y=130)
 
         self.labelAdicionarValor = Label(self.containerFinanceiro,
                                     bg=dict_cores["corPadrao"],
                                     fg=dict_cores["verde"],
-                                    text="VALOR A ACRESCENTAR:")
+                                    font=self.fonte3,
+                                    text="Valor a acrescentar:")
         self.labelAdicionarValor.place(x=100, y=160)
 
         self.entryAdicionarValor = Entry(self.containerFinanceiro,
                                     bg=dict_cores["corPadrao"],
                                     fg=dict_cores["fgEntry"],
                                     borderwidth=0,
+                                    font=self.fonte3,
                                     width=41)
         self.entryAdicionarValor.place(x=245, y=160)
 
@@ -335,6 +366,7 @@ class App:
                                       fg="white",
                                       borderwidth=0,
                                       text="Adicionar valor",
+                                      font=self.fonte3,
                                       command=self.adicionarValor)
         self.btnAdicionarValor.place(x=490, y=220)
 
@@ -343,17 +375,20 @@ class App:
         self.labelModoFinanceiro2 = Label(self.containerFinanceiro,
                                     bg=dict_cores["corPadrao"],
                                     fg=dict_cores["vermelho"],
-                                    text="RETIRAR VALOR DO SALDO")
+                                    font=self.fonte3,
+                                    text="Retirar valor do saldo")
         self.labelModoFinanceiro2.place(x=100, y=270)
 
         self.labelRetirarValor = Label(self.containerFinanceiro,
                                     bg=dict_cores["corPadrao"],
                                     fg=dict_cores["vermelho"],
-                                    text="VALOR A RETIRAR:")
+                                    font=self.fonte3,
+                                    text="Valor a retirar:")
         self.labelRetirarValor.place(x=100, y=300)
 
         self.entryRetirarValor = Entry(self.containerFinanceiro,
                                     bg=dict_cores["corPadrao"],
+                                    font=self.fonte3,
                                     fg=dict_cores["fgEntry"],
                                     borderwidth=0,
                                     width=41)
@@ -367,6 +402,7 @@ class App:
 
         self.btnRetirarValor = Button(self.containerFinanceiro,
                                       bg=dict_cores["vermelho"],
+                                      font=self.fonte3,
                                       fg="white",
                                       borderwidth=0,
                                       text="Retirar valor",
@@ -378,19 +414,22 @@ class App:
         self.labelModoFinanceiro3 = Label(self.containerFinanceiro,
                                     bg=dict_cores["corPadrao"],
                                     fg=dict_cores["verde"],
+                                    font=self.fonte3,
                                     text="SALDO ATUAL DA LOJA")
         self.labelModoFinanceiro3.place(x=100, y=430)
 
         self.labelSaldo = Label(self.containerFinanceiro,
                                     bg=dict_cores["corPadrao"],
                                     fg=dict_cores["verde"],
+                                    font=self.fonte3,
                                     text=f"R$ {self.saldo}")
-        self.labelSaldo.place(x=250, y=430)
+        self.labelSaldo.place(x=275, y=430)
 
         self.mostradorFinanceiro = Label(self.containerFinanceiro,
                                bg=dict_cores["corPadrao"],
                                fg=dict_cores["roxo"],
                                width=100,
+                               font=self.fonte3,
                                height=5,
                                anchor="w",
                                text="")
@@ -481,6 +520,7 @@ class App:
 
 
                 self.labelNomeCor = Label(self.mostradorTintas,
+                                          font=self.fonte3,
                                         anchor="center")
                 self.labelNomeCor.place(x=10, y=10)
                 
@@ -508,7 +548,7 @@ class App:
             else:
                 self.labelSaldo["fg"] = dict_cores["verde"]
 
-            self.mostradorFinanceiro["text"] = "VALOR ADICIONADO COM SUCESSO"
+            self.mostradorFinanceiro["text"] = "Valor adicionado com sucesso"
             self.janela.after(3000, self.apagar_msgFinanceiro)
             
         except ValueError:
@@ -525,7 +565,7 @@ class App:
             else:
                 self.labelSaldo["fg"] = dict_cores["verde"]
 
-            self.mostradorFinanceiro["text"] = "VALOR RETIRADO COM SUCESSO"
+            self.mostradorFinanceiro["text"] = "Valor retirado com sucesso"
             self.janela.after(3000, self.apagar_msgFinanceiro)
 
         except ValueError:
@@ -542,6 +582,13 @@ class App:
     def agradecimento(self):
         self.janela.destroy()
 
+        self.cont = 3
+        print("ENCERRANDO APLICAÇÃO EM")
+        while self.cont >= 1:
+            sleep(1)
+            print(self.cont)
+            self.cont-=1
+        sleep(2)
         print("Obrigado por utilizar nossos serviços!")
 
 
