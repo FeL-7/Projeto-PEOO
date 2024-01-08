@@ -60,6 +60,14 @@ class App:
             self.conexao = sqlite3.connect("estoqueDeTintas.db")
             self.sql = self.conexao.cursor()
 
+            self.sql.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='cores';")
+            self.tabela = self.sql.fetchone()
+
+            if not self.tabela:
+                self.sql.execute("CREATE TABLE cores (nome, hexcode)")
+                self.conexao.commit()
+
+
         except ConnectionError:
             print("Ocorreu um erro durante a conexão")
 
@@ -563,6 +571,11 @@ class App:
 
         except sqlite3.OperationalError:
             self.mostradorTintas["text"] = "Ocorreu um problema durante a exibição."
+            self.janela.after(3000, self.apagar_msgTintas)
+
+        except TclError:
+            self.mostradorTintas["bg"] = dict_cores["corPadrao"]
+            self.mostradorTintas["text"] = "Hexadecimal inválido"
             self.janela.after(3000, self.apagar_msgTintas)
 
 
