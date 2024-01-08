@@ -7,18 +7,13 @@ import sqlite3
 import pickle
 
 
-"""ESTILIZAR:
-FONTE
-
-INSERIR:
-WHILE
-TRATAMENTO DE EXCEÇÕES
-
-MELHORAR/REVER"""
+"""APARENTEMENTE FINALIZADO"""
 
 
-# claro = "#f5f7fc"
-# escuro = "#232833"
+"""
+claro = "#f5f7fc"
+escuro = "#232833"
+"""
 
 cores_tema = ["#f5f7fc", "#232833"]
 
@@ -26,6 +21,7 @@ dict_cores = {"corPadrao": cores_tema[0], "lilas": "#746fff", "roxo": "#5e5bc9",
 
 class App:
     def __init__(self):
+
         print("INICIANDO APLICAÇÃO EM:")
         for i in range (3, 0, -1):
             print(i)
@@ -41,6 +37,7 @@ class App:
         self.janela.iconphoto(False, self.icone)
 
         self.temaAtual = "claro"
+
         self.modoAtual = ""
 
         self.saldo = 0.00
@@ -59,8 +56,10 @@ class App:
             print("Fontes não instaladas")
 
         try:
+
             self.conexao = sqlite3.connect("estoqueDeTintas.db")
             self.sql = self.conexao.cursor()
+
         except ConnectionError:
             print("Ocorreu um erro durante a conexão")
 
@@ -74,15 +73,18 @@ class App:
         self.barraLateral.place(x=0, y=0)
 
         try:
+
             self.img_perfilOriginal = Image.open("imagens\perfil.jpg")
             self.img_perfilAlterada = self.img_perfilOriginal.resize((150, 170))
             self.img_perfil = ImageTk.PhotoImage(self.img_perfilAlterada)
+
         except FileNotFoundError:
             print("Arquivo não encontrado. Por favor, verifique o caminho inserido.")
 
         self.icone_perfil = Label(self.barraLateral,
                                   image=self.img_perfil)
         self.icone_perfil.place(x=50, y=50)
+
         self.nome_usuario = Label(self.barraLateral,
                                   text="Sr. Gerson",
                                   bg=dict_cores["roxo"],
@@ -107,8 +109,11 @@ class App:
                                         borderwidth=0,
                                         command=self.ativarModoFinanceiro)
         self.btn_modoFinanceiro.place(x=45, y=380)
+
         try:
+
             self.img_trocarTema = PhotoImage(file="imagens\mudar_tema.png").subsample(12)
+
         except FileNotFoundError:
             print("Arquivo não encontrado. Por favor, verifique o caminho inserido.")
 
@@ -152,9 +157,14 @@ class App:
         self.rodape.place(x=260,y=630)
 
 
+        # AO ENCERRAR FECHAR A JANELA
         self.janela.protocol("WM_DELETE_WINDOW", self.agradecimento)
 
         self.janela.mainloop()
+
+    # MÉTODOS ABAIXO
+
+    # MÉTODOS PARA CRIAÇÃO DE TELAS (MODO TINTAS E MODO FINANCEIRO)
 
 
     def ativarModoTintas(self):
@@ -296,7 +306,7 @@ class App:
         self.mostradorTintas = Label(self.containerTintas,
                                bg=dict_cores["corPadrao"],
                                fg=dict_cores["roxo"],
-                               width=100,
+                               width=85,
                                font=self.fonte3,
                                height=5,
                                anchor="w",
@@ -436,11 +446,15 @@ class App:
         self.mostradorFinanceiro.place(x=100, y=520)
 
 
+    # MÉTODOS GERAIS
+
+
     def serializar(self):
         self.sql.execute("SELECT * FROM cores")
         self.dadosCores = self.sql.fetchall()
 
         self.arq = open('coresSerializadas.txt', 'wb')
+
         for cor in self.dadosCores:
             pickle.dump(cor, self.arq)
 
@@ -452,19 +466,27 @@ class App:
 
 
     def mudarTema(self):
+
         if self.temaAtual == "claro":
             dict_cores["corPadrao"] = cores_tema[1]
             dict_cores["fgEntry"] = "#ffffff"
             self.temaAtual = "escuro"
+
         else:
             dict_cores["corPadrao"] = cores_tema[0]
             dict_cores["fgEntry"] = "#000000"
             self.temaAtual = "claro"
 
         if self.modoAtual == "tintas":
+
             self.ativarModoTintas()
+
         elif self.modoAtual == "financeiro":
+
             self.ativarModoFinanceiro()
+
+
+    # MÉTODOS PARA O MODO COR
 
 
     def adicionarCor(self):
@@ -482,6 +504,7 @@ class App:
         except sqlite3.OperationalError:
             self.mostradorTintas["text"] = "Ocorreu um problema durante a inserção no banco de dados."
             self.janela.after(3000, self.apagar_msgTintas)
+
 
     def excluirCor(self):
         try:
@@ -511,6 +534,7 @@ class App:
 
     def exibirCor(self):
         try:
+
             self.sql.execute(f"SELECT hexcode FROM cores WHERE nome = '{str(self.entryExibirCor1.get().upper())}'")
 
             self.cor = self.sql.fetchone()
@@ -523,26 +547,34 @@ class App:
                                           font=self.fonte3,
                                         anchor="center")
                 self.labelNomeCor.place(x=10, y=10)
+
                 
                 self.sql.execute(f"SELECT nome FROM cores WHERE nome = '{str(self.entryExibirCor1.get().upper())}'")
 
                 self.nomeCor = self.sql.fetchone()
 
                 self.labelNomeCor["text"] = self.nomeCor
-                self.labelNomeCor["bg"] = "white"
-                self.labelNomeCor["fg"] = "black"
+                self.labelNomeCor["bg"] = "#ffffff"
+                self.labelNomeCor["fg"] = "#000000"
             else:
                 self.mostradorTintas["bg"] = dict_cores["corPadrao"]
                 self.mostradorTintas["text"] = "Cor não encontrada no banco de dados"
                 self.janela.after(3000, self.apagar_msgTintas)
+
         except sqlite3.OperationalError:
             self.mostradorTintas["text"] = "Ocorreu um problema durante a exibição."
             self.janela.after(3000, self.apagar_msgTintas)
 
+
+    # MÉETODOS PARA O MODO FINANCEIRO
+
+
     def adicionarValor(self):
         try:
+
             self.saldo += float(self.entryAdicionarValor.get())
             self.labelSaldo["text"] = f"R$ {self.saldo:.2f}"
+
             if self.saldo < 0:
                 self.labelSaldo["fg"] = dict_cores["vermelho"]
             else:
@@ -572,8 +604,13 @@ class App:
             self.mostradorFinanceiro["text"] = "Insira apenas números"
             self.janela.after(3000, self.apagar_msgFinanceiro)
 
+
+    # MÉTODOS AUXILIARES
+
+
     def apagar_msgTintas(self):
         self.mostradorTintas["text"] = ''
+
 
     def apagar_msgFinanceiro(self):
         self.mostradorFinanceiro["text"] = ''
@@ -593,6 +630,9 @@ class App:
 
 
 try:
+
     aplicacao = App()
+
 except AttributeError:
     print("Atributo ausente.")
+    
