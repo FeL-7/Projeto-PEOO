@@ -1,5 +1,4 @@
 # Projeto-PEOO
-bla bla
 CLONANDO O REPOSITÓRIO
 Inicialmente, escolha um local para colocar os arquivos do projeto. Ao escolher, clique com o botão direito do mouse e vá na opção: 'Git Bash Here'
 Irá aparecer uma janelinha: o terminal do git.

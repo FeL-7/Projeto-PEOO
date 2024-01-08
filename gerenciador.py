@@ -7,7 +7,7 @@ import sqlite3
 import pickle
 
 
-"""APARENTEMENTE FINALIZADO"""
+"""Projeto finalizado"""
 
 
 """
